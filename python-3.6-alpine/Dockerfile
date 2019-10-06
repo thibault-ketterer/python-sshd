@@ -1,5 +1,5 @@
 FROM python:3.6-alpine
-MAINTAINER Eugene Savchenko
+MAINTAINER Thibault Ketterer
 
 ARG PROJECT_PATH=/usr/src/python-app/
 ENV SSH_SERVER_KEYS /etc/ssh/host_keys/
@@ -23,7 +23,7 @@ COPY /rootfs /
 EXPOSE 22
 
 RUN apk update && \
-    apk add bash openssh sudo && \
+    apk add bash openssh sudo  && \
     mkdir -p ${SSH_SERVER_KEYS} && \
     mkdir ${PROJECT_PATH} && \
     echo -e "HostKey ${SSH_SERVER_KEYS}ssh_host_rsa_key" >> /etc/ssh/sshd_config && \
@@ -34,6 +34,11 @@ RUN apk update && \
     echo "root:root" | chpasswd && \
     chmod a+x /usr/local/bin/* && \
     rm -rf /var/cache/apk/* /tmp/*
+
+RUN apk add gcc libxml2-dev libc-dev python-dev
+RUN apk add xmlsec-dev
+
+RUN pip install --no-cache-dir green
 
 WORKDIR ${PROJECT_PATH}
 
